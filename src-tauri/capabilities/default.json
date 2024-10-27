@@ -1,0 +1,23 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "cmd": "cmd",
+          "name": "cmd",
+          "args": true
+        },
+        {
+          "cmd": "powershell",
+          "name": "powershell",
+          "args": true
+        }
+      ]
+    }
+  ]
+}
