@@ -9,7 +9,7 @@ Arguments: Get-Process
 * Will show your computer's current process
 
 Application: cmd  
-Arguments: ["/C", "C:\\Program Files\\7-Zip\\7z.exe"]
+Arguments: ["/C", "C:\\\\Program Files\\\\7-Zip\\\\7z.exe"]
 * Will show the 7-Zip's CLI version and usage
 
 ## Install
