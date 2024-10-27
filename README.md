@@ -29,3 +29,7 @@ npm run tauri build
 When running in production, the command sometimes just freeze at Loading... and nothing happens (most of the time from cmd with [] arguments). Everything works fine in dev mode. The problem seems to be intermittent on Windows (not tested on MacOS/Linux).
 
 This repo is to help reproduction of the Shell plugin Command issue.
+
+## Screenshot
+
+<img src="static/screenshot.png"/>
