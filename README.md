@@ -4,11 +4,11 @@ Used: npm create tauri-app@latest to make a commands viewer for Windows using Ta
 
 ## Example commands
 
-Application: powershell
+Application: powershell  
 Arguments: Get-Process
 * Will show your computer's current process
 
-Application: cmd
+Application: cmd  
 Arguments: ["/C", "C:\\Program Files\\7-Zip\\7z.exe"]
 * Will show the 7-Zip's CLI version and usage
 
