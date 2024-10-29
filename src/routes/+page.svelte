@@ -1,20 +1,61 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { resourceDir } from "@tauri-apps/api/path";
   import { Command } from "@tauri-apps/plugin-shell";
 
-  let application = "cmd";
-  let args = "";
+  let inputApp = "cmd";
+  let inputArgs = "";
   let textAreaValue = "";
 
-  async function getOutput(application: string, args: string | string[]) {
+  onMount(() => resourceDir().then((res) => {
+    textAreaValue = "Tauri Path API Loaded!\nExecutable folder:\n" + res;
+  }).catch((err) => textAreaValue = "Error while loading Tauri Path API.\n" + err));
+
+  async function getCommandOutput(application: string, args: string | string[]): Promise<string> {
     textAreaValue = "Loading...";
-    return new Promise(async (resolve) => {
-      let output: string = "";
-      const command = Command.create(application, args);
-      command.on("close", () => resolve(output));
-      command.on("error", (error) => resolve("ERROR:\n" + String(error)));
-      command.stdout.on("data", line => output += line);
-      command.stderr.on("data", line => output += line);
-      await command.spawn();
+    let output = "";
+
+    return new Promise((resolve) => {
+      const timeoutId = setTimeout(() => resolve("Command timed out\nApplication: " + application + "\nArguments: " + JSON.stringify(args)), 5000);
+
+      try {
+        if (application === "powershell") {
+          args = [
+            "-ExecutionPolicy", "Bypass",
+            "-NoProfile",
+            "-Command", `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${args}`
+          ];
+        }
+
+        const command = Command.create(application, args);
+
+        command.on("close", (data) => {
+          clearTimeout(timeoutId);
+          console.log("Command closed with code:", data.code);
+          resolve(data.code === 0 ? output.trim() : "Command failed with code " + data.code);
+        });
+
+        command.on("error", (error) => {
+          clearTimeout(timeoutId);
+          console.error("Command error:", error);
+          resolve("ERROR:\n" + String(error));
+        });
+
+        command.stdout.on("data", (line) => {
+          console.log("stdout:", line);
+          output += line.trimEnd() + "\n";
+        });
+
+        command.stderr.on("data", (line) => {
+          console.error("stderr:", line);
+          output += line.trimEnd() + "\n";
+        });
+
+        command.spawn();
+      } catch (err) {
+        clearTimeout(timeoutId);
+        resolve("An error occurred:\n" + String(err));
+      }
     });
   }
 </script>
@@ -22,14 +63,18 @@
 <main class="container">
   <h1>Enter a CMD or PowerShell command</h1>
   <div class="row">
-    <select bind:value={application}>
+    <select bind:value={inputApp}>
       <option value="cmd">cmd</option>
       <option value="powershell">powershell</option>
     </select>
-    <input placeholder='Arguments or ["arg", "arg", ...]' style="width: 70vh;" bind:value={args} required on:keyup={async (evt) => {
-      if (evt.key === "Enter" && args.length > 0) { textAreaValue = String(await getOutput(application, args.startsWith("[") && args.endsWith("]") ? JSON.parse(args) : args)); }
+    <input placeholder='Arguments or ["arg", "arg", ...]' style="width: 70vh;" bind:value={inputArgs} required on:keyup={async (evt) => {
+      if (evt.key === "Enter" && inputArgs.length > 0) {
+        textAreaValue = await getCommandOutput(inputApp, inputArgs.startsWith("[") && inputArgs.endsWith("]") ? JSON.parse(inputArgs) : inputArgs);
+      }
     }} />
-    <button disabled={args.length === 0} on:click={async () => textAreaValue = String(await getOutput(application, args.startsWith("[") && args.endsWith("]") ? JSON.parse(args) : args))}>Spawn command</button>
+    <button disabled={inputArgs.length === 0} on:click={async () => {
+      textAreaValue = await getCommandOutput(inputApp, inputArgs.startsWith("[") && inputArgs.endsWith("]") ? JSON.parse(inputArgs) : inputArgs);
+    }}>Spawn command</button>
   </div>
   <div class="row" style="margin-top: 10px;">
     <textarea bind:value={textAreaValue} style="width: calc(100% - 20px); resize: none; height: calc(100vh - 165px);" rows="18" readonly></textarea>

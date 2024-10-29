@@ -10,7 +10,7 @@ Arguments: Get-Process
 
 Application: cmd  
 Arguments: ["/C", "C:\\\\Program Files\\\\7-Zip\\\\7z.exe"]
-* Will show the 7-Zip's CLI version and usage
+* Will show the 7-Zip's CLI version and usage *Seems to be not working sometimes*
 
 ## Install
 
@@ -26,7 +26,7 @@ npm run tauri build
 
 # Current Issue
 
-When running in production, the command sometimes just freeze at Loading... and nothing happens (most of the time from cmd with [] arguments). Everything works fine in dev mode. The problem seems to be intermittent on Windows (not tested on MacOS/Linux).
+When running in production, the command sometimes just freeze at Loading... and command throw a timeout (most of the time from cmd, check cmd example). Everything works fine in dev mode. The problem seems to be intermittent on Windows (not tested on MacOS/Linux).
 
 This repo is to help reproduction of the Shell plugin Command issue.
 

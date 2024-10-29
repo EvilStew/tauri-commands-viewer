@@ -1,6 +1,6 @@
 {
   "name": "tauri-commands-viewer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Tauri 2 spawn Command example for Windows.",
   "type": "module",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "update": "npm update && cd src-tauri && cargo update && cd ..",
     "tauri": "tauri"
   },
   "author": {
@@ -20,6 +21,7 @@
     "url": "https://github.com/EvilStew/tauri-commands-viewer"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.0.3",
     "@tauri-apps/plugin-shell": "^2.0.1"
   },
   "devDependencies": {
